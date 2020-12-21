@@ -4,7 +4,6 @@ import com.photoapp.discovery.api.users.data.UserEntity;
 import com.photoapp.discovery.api.users.repository.UsersRepository;
 import com.photoapp.discovery.api.users.shared.UserDto;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +13,12 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService{
 
     private final UsersRepository usersRepository;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public UserServiceImpl(UsersRepository usersRepository) {
+    public UserServiceImpl(UsersRepository usersRepository, ModelMapper modelMapper) {
         this.usersRepository = usersRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -25,15 +26,10 @@ public class UserServiceImpl implements UserService{
 
         dto.setUserId(UUID.randomUUID().toString());
 
-        ModelMapper mapper = new ModelMapper();
-        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
-        UserEntity userEntity = mapper.map(dto, UserEntity.class);
+        UserEntity userEntity = modelMapper.map(dto, UserEntity.class);
 
         userEntity.setEncryptedPassword(UUID.randomUUID().toString());
 
-        usersRepository.save(userEntity);
-
-        return null;
+        return modelMapper.map(usersRepository.save(userEntity), UserDto.class);
     }
 }
