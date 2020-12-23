@@ -37,6 +37,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     private AuthenticationFilter getAuthenticationFilter() throws Exception {
-        return new AuthenticationFilter(userService, env, authenticationManager());
+        AuthenticationFilter filter = new AuthenticationFilter(userService, env, authenticationManager());
+        filter.setFilterProcessesUrl(env.getProperty("login.url.path"));
+        return filter;
     }
 }
