@@ -6,6 +6,7 @@ import com.photoapp.discovery.api.users.service.UserService;
 import com.photoapp.discovery.api.users.shared.UserDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,6 +21,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/users")
+@RefreshScope
 public class UsersController {
 
     private final Environment environment;
@@ -39,7 +41,8 @@ public class UsersController {
 
     @GetMapping("/status/check")
     public String status() {
-        return "Working on port: " + environment.getProperty("local.server.port");
+        return "Working on port: " + environment.getProperty("local.server.port") +
+                ", with token: " + environment.getProperty("token.secret");
     }
 
     @PostMapping(
